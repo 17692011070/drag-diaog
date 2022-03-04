@@ -1,2 +1,2 @@
-# drag-diaog
-Base on Element - UI draggable component
+# drag-diaogCancel changes
+Base on Element - UI draggable dialog component
