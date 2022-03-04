@@ -9,10 +9,10 @@
         :close-on-click-modal="false"
         :visible.sync="visible">
         <div class="dialog-header" ref="dialogHeader" slot="title" @mousedown="down">
-            <p>{{title}}</p>
-            <section class="icons">
-                <span @click="updateDialogScope" @mousedown.stop="" :class="isFullScreen ? 'el-icon-crop' : 'el-icon-full-screen'"></span>
-                <span @click="close" @mousedown.stop="" class="el-icon-close"></span>
+            <p @mousedown.stop="">{{title}}</p>
+            <section class="icons" @mousedown.stop="">
+                <span @click="updateDialogScope" :class="isFullScreen ? 'el-icon-crop' : 'el-icon-full-screen'"></span>
+                <span @click="handleClose" class="el-icon-close"></span>
             </section>
         </div>
         <slot></slot>
@@ -37,7 +37,8 @@ export default {
         visible: {
             type: Boolean,
             default: false
-        }
+        },
+        beforeClose: Function
     },
     watch: {
         isFullScreen(n) {
@@ -61,9 +62,18 @@ export default {
         }
     },
     methods: {
-        close() {this.isFullScreen=false;this.$emit('close');this.$emit('update:visible', false);},
+        handleClose() {
+            if (typeof this.beforeClose === 'function') {
+                this.beforeClose();
+                this.isFullScreen = false;
+            } else {
+                this.close();
+            }
+        },
+        close() {this.$emit('close');this.$emit('update:visible', false);this.isFullScreen = false;},
         updateDialogScope() {
             this.isFullScreen = !this.isFullScreen;
+            
         },
         down(e) {
             this.downPosition = {top: e.offsetY, left: e.offsetX};
